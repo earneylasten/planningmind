@@ -73,7 +73,8 @@ if st.button("🔍 Analyze My Destination", type="primary"):
         st.metric("Destination Health Index (DHI)", f"{dhi}/100", label)
         st.progress(dhi / 100)
 
-        st.markdown(f"### Butler Stage {stage}: {stage_desc}")
+        st.markdown(f"### Destination Stage {stage}: {stage_desc}")
+        st.caption("Lasten Destination Intelligence Framework (LDIF) · Dr. Earney F. Lasten, Ph.D.")
 
         st.markdown("### Your dimension scores:")
         dims = [
