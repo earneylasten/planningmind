@@ -100,7 +100,7 @@ if st.button("🔍 Analyze My Destination", type="primary"):
             "Get matched with experts at [viamoon.com/network](https://viamoon.com/network)"
         )
         st.caption(
-            "PlanningMind by ViaMoon · Dr. Earney F. Lasten, Ph.D. · "
-            "Planning Blueprint Process (Lasten & Pizam, 2013) · "
-            "© 2026 VIAMOON Consultancy"
+            "PlanningMind · Lasten Destination Intelligence Framework (LDIF) · "
+            "26-step Planning Blueprint Process · "
+            "© 2026 Dr. Earney F. Lasten, Ph.D. · VIAMOON Consultancy (Aruba) · VIAMOON SAS (Colombia)"
         )
