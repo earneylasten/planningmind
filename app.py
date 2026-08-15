@@ -153,13 +153,13 @@ st.divider()
 col1, col2 = st.columns(2)
 with col1:
     destination = st.text_input(
-        "🏝️ Destination Name",
-        placeholder="e.g. Aruba, San Nicolas, Medellín..."
+        "🏝️ Destination / City / Region",
+        placeholder="e.g. Aruba, New York, San Nicolas, Medellín..."
     )
 with col2:
     country = st.text_input(
-        "🌍 Country",
-        placeholder="e.g. Aruba, Colombia, Netherlands..."
+        "🌍 Country / Territory",
+        placeholder="e.g. Aruba, USA, Colombia, Netherlands..."
     )
 
 st.markdown("### Score each dimension 0–100")
