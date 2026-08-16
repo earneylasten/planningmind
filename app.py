@@ -132,12 +132,19 @@ def get_blueprint(scores):
 
 # ── Header ────────────────────────────────
 
-st.title("🌙 PlanningMind")
-st.subheader("Destination Health Index · Planning Blueprint Mapper")
-st.markdown(
-    "**By Dr. Earney F. Lasten, Ph.D. · "
-    "[viamoon.com](https://viamoon.com)**"
-)
+col_logo, col_title = st.columns([1, 4])
+with col_logo:
+    st.image(
+        "https://viamoon.com/viamoon-logo.png",
+        width=180,
+    )
+with col_title:
+    st.title("🌙 PlanningMind")
+    st.subheader("Destination Health Index · Planning Blueprint Mapper")
+    st.markdown(
+        "**By Dr. Earney F. Lasten, Ph.D. · "
+        "[viamoon.com](https://viamoon.com)**"
+    )
 st.markdown("""
 *The Lasten Destination Intelligence Framework (LDIF) —
 an 11-dimension diagnostic system for destination health,
