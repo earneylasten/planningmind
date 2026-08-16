@@ -280,19 +280,51 @@ if st.button("🔍 Analyze My Destination →", type="primary", use_container_wi
                     st.markdown(f"Stage {num}: {name}")
             st.caption("Lasten Destination Intelligence Framework (LDIF) · © 2026 Dr. Earney F. Lasten, Ph.D.")
 
-        with tab3:
+       with tab3:
             st.markdown(f"### 26-Step Planning Blueprint — {destination}")
-            st.markdown("Based on your 11-dimension scores, these planning steps apply to your destination right now.")
+            st.markdown(
+                "Based on your 11-dimension scores, "
+                "these planning steps apply to your "
+                "destination right now."
+            )
+
+            # ── Top CTA ──────────────────
+            st.info(
+                "🗺️ **Ready to execute?** "
+                "Work through all 26 steps interactively at "
+                "[viamoon.com/flowchart](https://viamoon.com/flowchart) "
+                "— with AI guidance at every step."
+            )
+
             if urgent_steps:
                 st.markdown("#### 🔴 Urgent — Address Immediately")
                 for s in urgent_steps:
-                    st.markdown(f"**Step {s}** — {BLUEPRINT_STEPS[s]}")
+                    col_step, col_link = st.columns([6, 1])
+                    with col_step:
+                        st.markdown(f"**Step {s}** — {BLUEPRINT_STEPS[s]}")
+                    with col_link:
+                        st.markdown(
+                            f"[Open ↗](https://viamoon.com/flowchart"
+                            f"#step-{s})"
+                        )
             else:
-                st.success("No urgent steps — your destination is performing well.")
+                st.success(
+                    "No urgent steps — your destination "
+                    "is performing well."
+                )
+
             if important_steps:
                 st.markdown("#### 🟡 Important — Address This Quarter")
                 for s in important_steps:
-                    st.markdown(f"Step {s} — {BLUEPRINT_STEPS[s]}")
+                    col_step, col_link = st.columns([6, 1])
+                    with col_step:
+                        st.markdown(f"Step {s} — {BLUEPRINT_STEPS[s]}")
+                    with col_link:
+                        st.markdown(
+                            f"[Open ↗](https://viamoon.com/flowchart"
+                            f"#step-{s})"
+                        )
+
             st.markdown("#### The 7 Major Questions")
             questions = [
                 ("Why?",     "Steps 1-2",   "Mission & Vision"),
@@ -305,9 +337,11 @@ if st.button("🔍 Analyze My Destination →", type="primary", use_container_wi
             ]
             for q, steps, desc in questions:
                 st.markdown(f"**{q}** · {steps} · {desc}")
-            st.markdown("Execute your full plan at **[viamoon.com/flowchart](https://viamoon.com/flowchart)**")
-            st.caption("26-step Planning Blueprint Process · © 2026 Dr. Earney F. Lasten, Ph.D.")
 
+            st.caption(
+                "26-step Planning Blueprint Process · "
+                "© 2026 Dr. Earney F. Lasten, Ph.D."
+            )
         with tab4:
             st.markdown(f"### Action Plan — {destination}")
             critical = [(k, v) for k, v in scores.items() if v < 40]
