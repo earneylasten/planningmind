@@ -163,15 +163,30 @@ st.divider()
 
 # ── Inputs ────────────────────────────────
 
+# Read URL parameters passed from lifecycle.viamoon.com
+params = st.query_params
+prefill_dest = params.get("destination", "")
+prefill_country = params.get("country", "")
+
+if prefill_dest:
+    st.success(
+        f"🌙 Welcome from lifecycle.viamoon.com — "
+        f"continuing your deeper analysis for "
+        f"**{prefill_dest}**. "
+        f"Score all 11 dimensions below and click Analyze."
+    )
+
 col1, col2 = st.columns(2)
 with col1:
     destination = st.text_input(
         "🏝️ Destination / City / Region",
+        value=prefill_dest,
         placeholder="e.g. Aruba, New York, San Nicolas, Medellín..."
     )
 with col2:
     country = st.text_input(
         "🌍 Country / Territory",
+        value=prefill_country,
         placeholder="e.g. Aruba, USA, Colombia, Netherlands..."
     )
 
