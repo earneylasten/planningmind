@@ -554,20 +554,222 @@ st.caption(T["score_caption"])
 scores = {}
 col_a, col_b = st.columns(2)
 
+# ── Dimension help text ───────────────────
+DIM_HELP = {
+    "destination": (
+        "Score the overall development stage and "
+        "physical readiness of the destination. "
+        "Consider: lifecycle stage (exploration to "
+        "rejuvenation), quality of roads, airports "
+        "and utilities, diversity of accommodation, "
+        "condition of core attractions, and "
+        "transportation connectivity. "
+        "Low = underdeveloped or deteriorating. "
+        "High = well-developed, diverse, connected."
+    ),
+    "marketing": (
+        "Score how effectively the destination "
+        "attracts and retains the right visitors. "
+        "Consider: visitor growth trend (last 3 "
+        "years), percentage of repeat visitors, "
+        "average length of stay, visitor "
+        "satisfaction scores, and the strength "
+        "and clarity of the destination brand. "
+        "Low = declining visitors, weak brand. "
+        "High = growing, loyal, satisfied visitors."
+    ),
+    "economic": (
+        "Score the economic health and fairness "
+        "of tourism's contribution. Consider: "
+        "tourism share of local GDP and jobs, "
+        "how much revenue stays local vs leaks "
+        "to foreign companies, local ownership "
+        "of tourism businesses, and diversity "
+        "of the tourism economy beyond hotels "
+        "and restaurants. "
+        "Low = high leakage, low local benefit. "
+        "High = strong local economic participation."
+    ),
+    "social": (
+        "Score the relationship between tourism "
+        "and the local community. Consider: "
+        "resident attitudes toward tourism "
+        "(welcoming to hostile), crime rates "
+        "linked to tourism, displacement of "
+        "local residents from their neighborhoods, "
+        "and whether locals participate in "
+        "tourism planning decisions. "
+        "Low = community hostility, displacement. "
+        "High = community support and participation."
+    ),
+    "environmental": (
+        "Score the ecological condition of the "
+        "destination. Consider: pressure on "
+        "biodiversity from visitor activity, "
+        "water and air pollution in tourism "
+        "zones, waste management capacity vs "
+        "peak visitor load, integrity of "
+        "protected areas, and investment in "
+        "environmental management. "
+        "Low = severe environmental degradation. "
+        "High = well-protected natural environment."
+    ),
+    "housing_labor": (
+        "Score whether local people can afford "
+        "to live and work in the destination. "
+        "Consider: ratio of housing costs to "
+        "local wages, proportion of housing "
+        "converted to short-term tourist rentals, "
+        "availability of affordable worker "
+        "housing, and whether the tourism "
+        "workforce is stable or constantly "
+        "leaving. "
+        "Low = workers cannot afford to live "
+        "locally, chronic staffing crisis. "
+        "High = affordable, stable workforce."
+    ),
+    "climate": (
+        "Score the destination's readiness for "
+        "climate change and resource pressures. "
+        "Consider: vulnerability to sea level "
+        "rise, hurricanes, drought or flooding, "
+        "security of freshwater supply, "
+        "reliability of energy systems, "
+        "emergency preparedness, dependence "
+        "on a single tourist season, and "
+        "carbon footprint per visitor. "
+        "Low = highly vulnerable, unprepared. "
+        "High = resilient, diverse, prepared."
+    ),
+    "cultural": (
+        "Score the health of local culture and "
+        "language in the context of tourism. "
+        "Consider: vitality of local languages "
+        "(are children still learning them?), "
+        "continuity of traditional practices "
+        "and crafts, whether cultural events "
+        "serve locals or only tourists, and "
+        "the integrity of heritage sites. "
+        "Low = language dying, culture staged "
+        "only for tourists, heritage eroding. "
+        "High = living culture, genuine "
+        "heritage, thriving local identity."
+    ),
+    "accessibility": (
+        "Score how accessible the destination "
+        "is to all types of visitors. Consider: "
+        "physical accessibility for visitors "
+        "with mobility, sensory or cognitive "
+        "disabilities, economic accessibility "
+        "(can visitors of different income "
+        "levels afford to visit?), digital "
+        "accessibility of tourism platforms, "
+        "and availability of information in "
+        "multiple languages. "
+        "Low = excludes many visitor groups. "
+        "High = welcoming and accessible to all."
+    ),
+    "digital": (
+        "Score the destination's digital health "
+        "and online reputation. Consider: overall "
+        "sentiment of online reviews (TripAdvisor, "
+        "Google, social media), whether reviews "
+        "are improving or declining, dependence "
+        "on a small number of booking platforms, "
+        "and the destination's capacity to "
+        "respond effectively to reputation crises. "
+        "Low = poor reviews, high platform "
+        "dependency, no crisis capacity. "
+        "High = strong positive reputation, "
+        "diversified digital channels."
+    ),
+    "governance": (
+        "Score the institutional capacity to "
+        "plan and manage tourism effectively. "
+        "Consider: coordination between "
+        "government agencies responsible for "
+        "tourism, whether planning rules are "
+        "actually enforced, stability of "
+        "funding for destination management, "
+        "meaningful inclusion of communities "
+        "in decisions, and the ability of "
+        "institutions to adapt quickly to "
+        "changing conditions. "
+        "Low = fragmented agencies, weak "
+        "enforcement, no community voice. "
+        "High = coherent policy, strong "
+        "institutions, community-driven planning."
+    ),
+}
+
+# ── Expandable scoring guide ──────────────
+with st.expander("📖 Scoring Guide — what does each dimension mean?"):
+    for dim, label in T["dim_labels"].items():
+        st.markdown(f"**{label}**")
+        st.caption(DIM_HELP[dim])
+        st.markdown("---")
+
+# ── Sliders with tooltips ─────────────────
+col_a, col_b = st.columns(2)
+
 with col_a:
-    scores["destination"]   = st.slider(T["dim_labels"]["destination"],   0, 100, 50, 5)
-    scores["marketing"]     = st.slider(T["dim_labels"]["marketing"],     0, 100, 50, 5)
-    scores["economic"]      = st.slider(T["dim_labels"]["economic"],      0, 100, 50, 5)
-    scores["social"]        = st.slider(T["dim_labels"]["social"],        0, 100, 50, 5)
-    scores["environmental"] = st.slider(T["dim_labels"]["environmental"], 0, 100, 50, 5)
-    scores["housing_labor"] = st.slider(T["dim_labels"]["housing_labor"], 0, 100, 50, 5)
+    scores["destination"] = st.slider(
+        T["dim_labels"]["destination"],
+        0, 100, 50, 5,
+        help=DIM_HELP["destination"]
+    )
+    scores["marketing"] = st.slider(
+        T["dim_labels"]["marketing"],
+        0, 100, 50, 5,
+        help=DIM_HELP["marketing"]
+    )
+    scores["economic"] = st.slider(
+        T["dim_labels"]["economic"],
+        0, 100, 50, 5,
+        help=DIM_HELP["economic"]
+    )
+    scores["social"] = st.slider(
+        T["dim_labels"]["social"],
+        0, 100, 50, 5,
+        help=DIM_HELP["social"]
+    )
+    scores["environmental"] = st.slider(
+        T["dim_labels"]["environmental"],
+        0, 100, 50, 5,
+        help=DIM_HELP["environmental"]
+    )
+    scores["housing_labor"] = st.slider(
+        T["dim_labels"]["housing_labor"],
+        0, 100, 50, 5,
+        help=DIM_HELP["housing_labor"]
+    )
 
 with col_b:
-    scores["climate"]       = st.slider(T["dim_labels"]["climate"],       0, 100, 50, 5)
-    scores["cultural"]      = st.slider(T["dim_labels"]["cultural"],      0, 100, 50, 5)
-    scores["accessibility"] = st.slider(T["dim_labels"]["accessibility"], 0, 100, 50, 5)
-    scores["digital"]       = st.slider(T["dim_labels"]["digital"],       0, 100, 50, 5)
-    scores["governance"]    = st.slider(T["dim_labels"]["governance"],    0, 100, 50, 5)
+    scores["climate"] = st.slider(
+        T["dim_labels"]["climate"],
+        0, 100, 50, 5,
+        help=DIM_HELP["climate"]
+    )
+    scores["cultural"] = st.slider(
+        T["dim_labels"]["cultural"],
+        0, 100, 50, 5,
+        help=DIM_HELP["cultural"]
+    )
+    scores["accessibility"] = st.slider(
+        T["dim_labels"]["accessibility"],
+        0, 100, 50, 5,
+        help=DIM_HELP["accessibility"]
+    )
+    scores["digital"] = st.slider(
+        T["dim_labels"]["digital"],
+        0, 100, 50, 5,
+        help=DIM_HELP["digital"]
+    )
+    scores["governance"] = st.slider(
+        T["dim_labels"]["governance"],
+        0, 100, 50, 5,
+        help=DIM_HELP["governance"]
+    )
 
 st.divider()
 
