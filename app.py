@@ -1,6 +1,12 @@
 import streamlit as st
 import requests
 
+st.set_page_config(
+    page_title="PlanningMind · ViaMoon",
+    page_icon="https://exhibz.viamoon.com/wp-content/uploads/2026/08/cropped-Favicon114.png",
+    layout="wide",
+)
+
 SUPABASE_URL = st.secrets["SUPABASE_URL"]
 SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
 
@@ -20,14 +26,6 @@ def save_assessment(data: dict) -> bool:
         return response.status_code == 201
     except Exception:
         return False
-
-st.set_page_config(
-    page_title="PlanningMind · ViaMoon",
-    page_icon="https://exhibz.viamoon.com/wp-content/uploads/2026/08/cropped-Favicon114.png",
-    layout="wide",
-)
-
-# ── Framework Data ────────────────────────
 
 BLUEPRINT_STEPS = {
     1:  "Define the Mission — Why does this project exist?",
@@ -59,37 +57,23 @@ BLUEPRINT_STEPS = {
 }
 
 STAGES = {
-    1: ("Exploration",
-        "Few visitors, no formal infrastructure. "
-        "Destination largely unknown."),
-    2: ("Involvement",
-        "Local initiatives emerging. Basic facilities "
-        "developing. Visitor numbers growing slowly."),
-    3: ("Development",
-        "Rapid growth. Investment arriving. "
-        "Infrastructure expanding fast."),
-    4: ("Consolidation",
-        "Growth slowing. Market maturing. "
-        "Destination well established."),
-    5: ("Stagnation",
-        "Peak capacity reached. Visitor numbers plateau. "
-        "Environmental and social stress appearing."),
-    6: ("Decline",
-        "Visitor numbers falling. Losing competitiveness. "
-        "Urgent intervention needed."),
-    7: ("Rejuvenation",
-        "Active reinvention underway. New products, "
-        "new markets, new infrastructure."),
+    1: ("Exploration", "Few visitors, no formal infrastructure. Destination largely unknown."),
+    2: ("Involvement", "Local initiatives emerging. Basic facilities developing. Visitor numbers growing slowly."),
+    3: ("Development", "Rapid growth. Investment arriving. Infrastructure expanding fast."),
+    4: ("Consolidation", "Growth slowing. Market maturing. Destination well established."),
+    5: ("Stagnation", "Peak capacity reached. Visitor numbers plateau. Environmental and social stress appearing."),
+    6: ("Decline", "Visitor numbers falling. Losing competitiveness. Urgent intervention needed."),
+    7: ("Rejuvenation", "Active reinvention underway. New products, new markets, new infrastructure."),
 }
 
 INTERVENTIONS = {
-    1: "Foundational planning needed. Focus on Steps 1–6 — establish mission, vision, and stakeholder alignment before any development begins.",
-    2: "Structure the growth. Steps 3–8 are critical — formalize stakeholder engagement and conduct supply and demand analysis.",
-    3: "Manage rapid development. Steps 9–18 are urgent — assess carrying capacity and protect what makes your destination unique.",
-    4: "Diversify and refresh. Steps 6–8 and 24–26 apply — strengthen your market understanding and marketing strategy.",
-    5: "Urgent intervention required. Steps 1–2 and 19–23 are critical — redefine your vision and redesign your product offering.",
+    1: "Foundational planning needed. Focus on Steps 1-6 — establish mission, vision, and stakeholder alignment before any development begins.",
+    2: "Structure the growth. Steps 3-8 are critical — formalize stakeholder engagement and conduct supply and demand analysis.",
+    3: "Manage rapid development. Steps 9-18 are urgent — assess carrying capacity and protect what makes your destination unique.",
+    4: "Diversify and refresh. Steps 6-8 and 24-26 apply — strengthen your market understanding and marketing strategy.",
+    5: "Urgent intervention required. Steps 1-2 and 19-23 are critical — redefine your vision and redesign your product offering.",
     6: "Bold action needed. Full 26-step replanning recommended. Start from Step 1 and rebuild systematically.",
-    7: "Sustain the momentum. Steps 19–26 apply — lock in design innovations and execute your relaunch strategy.",
+    7: "Sustain the momentum. Steps 19-26 apply — lock in design innovations and execute your relaunch strategy.",
 }
 
 DIMENSION_TO_STEPS = {
@@ -108,9 +92,9 @@ DIMENSION_TO_STEPS = {
 
 WEIGHTS = {
     "destination": 0.10, "marketing": 0.08,
-    "economic": 0.12,    "social": 0.10,
+    "economic": 0.12, "social": 0.10,
     "environmental": 0.10, "housing_labor": 0.09,
-    "climate": 0.09,     "cultural": 0.09,
+    "climate": 0.09, "cultural": 0.09,
     "accessibility": 0.08, "digital": 0.07,
     "governance": 0.08,
 }
@@ -166,6 +150,7 @@ with col_title:
         "**By Dr. Earney F. Lasten, Ph.D. · "
         "[viamoon.com](https://viamoon.com)**"
     )
+
 st.markdown("""
 *The Lasten Destination Intelligence Framework (LDIF) —
 an 11-dimension diagnostic system for destination health,
@@ -191,11 +176,7 @@ with col2:
     )
 
 st.markdown("### Score each dimension 0–100")
-st.caption(
-    "0 = Critical problem · "
-    "50 = Needs attention · "
-    "100 = Excellent"
-)
+st.caption("0 = Critical problem · 50 = Needs attention · 100 = Excellent")
 
 # ── Sliders ───────────────────────────────
 
@@ -221,16 +202,12 @@ st.divider()
 
 # ── Analyze ───────────────────────────────
 
-if st.button("🔍 Analyze My Destination →",
-             type="primary",
-             use_container_width=True):
+if st.button("🔍 Analyze My Destination →", type="primary", use_container_width=True):
 
     if not destination or not country:
         st.error("⚠️ Please enter a destination name and country.")
     else:
-        dhi = round(
-            sum(scores[k] * WEIGHTS[k] for k in WEIGHTS), 1
-        )
+        dhi = round(sum(scores[k] * WEIGHTS[k] for k in WEIGHTS), 1)
         dhi_label = (
             "🟢 Healthy" if dhi >= 65
             else "🟡 Needs Attention" if dhi >= 40
@@ -238,7 +215,9 @@ if st.button("🔍 Analyze My Destination →",
         )
         stage_num = get_stage(dhi)
         stage_name, stage_desc = STAGES[stage_num]
-      saved = save_assessment({
+        urgent_steps, important_steps = get_blueprint(scores)
+
+        saved = save_assessment({
             "destination_name": destination,
             "country": country,
             "score_destination": scores["destination"],
@@ -260,8 +239,6 @@ if st.button("🔍 Analyze My Destination →",
             st.toast("✅ Assessment saved", icon="🌙")
         else:
             st.toast("⚠️ Could not save — results still shown")
-            pass
-        urgent_steps, important_steps = get_blueprint(scores)
 
         st.markdown(f"## 📊 Results — {destination}, {country}")
 
@@ -272,180 +249,86 @@ if st.button("🔍 Analyze My Destination →",
             "✅ Action Plan",
         ])
 
-        # ── Tab 1: DHI ────────────────────
         with tab1:
             col_m1, col_m2 = st.columns(2)
             with col_m1:
-                st.metric(
-                    "Destination Health Index (DHI)",
-                    f"{dhi}/100",
-                    dhi_label
-                )
+                st.metric("Destination Health Index (DHI)", f"{dhi}/100", dhi_label)
             with col_m2:
-                st.metric(
-                    "Destination Stage",
-                    f"Stage {stage_num}",
-                    stage_name
-                )
-
+                st.metric("Destination Stage", f"Stage {stage_num}", stage_name)
             st.progress(dhi / 100)
             st.markdown("#### Dimension Scores")
-
             for dim, label in DIM_LABELS.items():
                 score = scores[dim]
-                icon = (
-                    "🟢" if score >= 65
-                    else "🟡" if score >= 40
-                    else "🔴"
-                )
+                icon = "🟢" if score >= 65 else "🟡" if score >= 40 else "🔴"
                 c1, c2 = st.columns([5, 1])
                 with c1:
                     st.progress(score / 100, text=label)
                 with c2:
                     st.markdown(f"{icon} **{score}**")
+            st.caption("Lasten Destination Intelligence Framework (LDIF) · © 2026 Dr. Earney F. Lasten, Ph.D.")
 
-            st.caption(
-                "Lasten Destination Intelligence Framework (LDIF) · "
-                "© 2026 Dr. Earney F. Lasten, Ph.D."
-            )
-
-        # ── Tab 2: Stage ──────────────────
         with tab2:
-            st.markdown(
-                f"### Stage {stage_num}: **{stage_name}**"
-            )
+            st.markdown(f"### Stage {stage_num}: **{stage_name}**")
             st.info(stage_desc)
             st.markdown("#### What this means for your destination:")
             st.write(INTERVENTIONS[stage_num])
-
             st.markdown("#### All Destination Stages")
             for num, (name, desc) in STAGES.items():
                 if num == stage_num:
-                    st.markdown(
-                        f"**▶ Stage {num}: {name}** "
-                        f"← *{destination}*"
-                    )
+                    st.markdown(f"**▶ Stage {num}: {name}** ← *{destination}*")
                 else:
                     st.markdown(f"Stage {num}: {name}")
+            st.caption("Lasten Destination Intelligence Framework (LDIF) · © 2026 Dr. Earney F. Lasten, Ph.D.")
 
-            st.caption(
-                "Lasten Destination Intelligence Framework (LDIF) · "
-                "© 2026 Dr. Earney F. Lasten, Ph.D."
-            )
-
-        # ── Tab 3: Blueprint ──────────────
         with tab3:
-            st.markdown(
-                "### 26-Step Planning Blueprint — "
-                f"{destination}"
-            )
-            st.markdown(
-                "Based on your 11-dimension scores, "
-                "these planning steps apply to your "
-                "destination right now."
-            )
-
+            st.markdown(f"### 26-Step Planning Blueprint — {destination}")
+            st.markdown("Based on your 11-dimension scores, these planning steps apply to your destination right now.")
             if urgent_steps:
                 st.markdown("#### 🔴 Urgent — Address Immediately")
                 for s in urgent_steps:
-                    st.markdown(
-                        f"**Step {s}** — {BLUEPRINT_STEPS[s]}"
-                    )
+                    st.markdown(f"**Step {s}** — {BLUEPRINT_STEPS[s]}")
             else:
-                st.success(
-                    "No urgent steps — your destination "
-                    "is performing well across all dimensions."
-                )
-
+                st.success("No urgent steps — your destination is performing well.")
             if important_steps:
-                st.markdown(
-                    "#### 🟡 Important — Address This Quarter"
-                )
+                st.markdown("#### 🟡 Important — Address This Quarter")
                 for s in important_steps:
-                    st.markdown(
-                        f"Step {s} — {BLUEPRINT_STEPS[s]}"
-                    )
-
+                    st.markdown(f"Step {s} — {BLUEPRINT_STEPS[s]}")
             st.markdown("#### The 7 Major Questions")
             questions = [
-                ("Why?",     "Steps 1–2",   "Mission & Vision"),
-                ("Who?",     "Steps 3–6",   "Stakeholders & Market"),
-                ("What?",    "Steps 7–14",  "Analysis & Context"),
+                ("Why?",     "Steps 1-2",   "Mission & Vision"),
+                ("Who?",     "Steps 3-6",   "Stakeholders & Market"),
+                ("What?",    "Steps 7-14",  "Analysis & Context"),
                 ("When?",    "Step 15",     "Story & Timeline"),
-                ("Where?",   "Steps 16–18", "Location & Access"),
-                ("How?",     "Steps 19–23", "Design & Feasibility"),
-                ("Execute!", "Steps 24–26", "Marketing & Launch"),
+                ("Where?",   "Steps 16-18", "Location & Access"),
+                ("How?",     "Steps 19-23", "Design & Feasibility"),
+                ("Execute!", "Steps 24-26", "Marketing & Launch"),
             ]
             for q, steps, desc in questions:
                 st.markdown(f"**{q}** · {steps} · {desc}")
+            st.markdown("Execute your full plan at **[viamoon.com/flowchart](https://viamoon.com/flowchart)**")
+            st.caption("26-step Planning Blueprint Process · © 2026 Dr. Earney F. Lasten, Ph.D.")
 
-            st.markdown(
-                "Execute your full plan at "
-                "**[viamoon.com/flowchart]"
-                "(https://viamoon.com/flowchart)**"
-            )
-            st.caption(
-                "26-step Planning Blueprint Process · "
-                "© 2026 Dr. Earney F. Lasten, Ph.D."
-            )
-
-        # ── Tab 4: Action Plan ────────────
         with tab4:
             st.markdown(f"### Action Plan — {destination}")
-
-            critical = [
-                (k, v) for k, v in scores.items()
-                if v < 40
-            ]
+            critical = [(k, v) for k, v in scores.items() if v < 40]
             critical.sort(key=lambda x: x[1])
-
             if critical:
                 st.markdown("#### Most Critical Dimensions:")
                 for dim, score in critical[:3]:
-                    st.error(
-                        f"🔴 **{DIM_LABELS[dim]}** — "
-                        f"scored {score}/100 — "
-                        f"requires immediate intervention."
-                    )
+                    st.error(f"🔴 **{DIM_LABELS[dim]}** — scored {score}/100 — requires immediate intervention.")
             else:
-                st.success(
-                    "🟢 No critical dimensions. "
-                    "Focus on maintaining strengths."
-                )
-
+                st.success("🟢 No critical dimensions. Focus on maintaining strengths.")
             st.markdown("#### Recommended Next Steps:")
-            st.markdown(
-                "1. Review the urgent Blueprint steps "
-                "in the 26-Step tab above"
-            )
-            st.markdown(
-                "2. Engage a certified planning expert → "
-                "[viamoon.com/network]"
-                "(https://viamoon.com/network)"
-            )
-            st.markdown(
-                "3. Post your planning project → "
-                "[viamoon.com/marketplace]"
-                "(https://viamoon.com/marketplace)"
-            )
-            st.markdown(
-                "4. Use the full 26-step platform → "
-                "[viamoon.com/flowchart]"
-                "(https://viamoon.com/flowchart)"
-            )
-            st.markdown(
-                "5. Read The Experience Masterplan → "
-                "[viamoon.com/textbook]"
-                "(https://viamoon.com/textbook)"
-            )
-
+            st.markdown("1. Review the urgent Blueprint steps in the 26-Step tab above")
+            st.markdown("2. Engage a certified planning expert → [viamoon.com/network](https://viamoon.com/network)")
+            st.markdown("3. Post your planning project → [viamoon.com/marketplace](https://viamoon.com/marketplace)")
+            st.markdown("4. Use the full 26-step platform → [viamoon.com/flowchart](https://viamoon.com/flowchart)")
+            st.markdown("5. Read The Experience Masterplan → [viamoon.com/textbook](https://viamoon.com/textbook)")
             st.divider()
             st.caption(
-                "PlanningMind · Lasten Destination "
-                "Intelligence Framework (LDIF) · "
+                "PlanningMind · Lasten Destination Intelligence Framework (LDIF) · "
                 "26-step Planning Blueprint Process · "
                 "© 2026 Dr. Earney F. Lasten, Ph.D. · "
-                "VIAMOON Consultancy (Aruba) · "
-                "VIAMOON SAS (Colombia) · "
+                "VIAMOON Consultancy (Aruba) · VIAMOON SAS (Colombia) · "
                 "viamoon.com"
             )
