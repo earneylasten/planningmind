@@ -1,9 +1,25 @@
 import streamlit as st
-from supabase import create_client
+import requests
 
 SUPABASE_URL = st.secrets["SUPABASE_URL"]
 SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
-db = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+def save_assessment(data: dict) -> bool:
+    try:
+        response = requests.post(
+            f"{SUPABASE_URL}/rest/v1/planningmind_assessments",
+            json=data,
+            headers={
+                "apikey": SUPABASE_KEY,
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "Content-Type": "application/json",
+                "Prefer": "return=minimal",
+            },
+            timeout=5,
+        )
+        return response.status_code == 201
+    except Exception:
+        return False
 
 st.set_page_config(
     page_title="PlanningMind · ViaMoon",
@@ -222,26 +238,28 @@ if st.button("🔍 Analyze My Destination →",
         )
         stage_num = get_stage(dhi)
         stage_name, stage_desc = STAGES[stage_num]
-        try:
-            db.table("planningmind_assessments").insert({
-                "destination_name": destination,
-                "country": country,
-                "score_destination": scores["destination"],
-                "score_marketing": scores["marketing"],
-                "score_economic": scores["economic"],
-                "score_social": scores["social"],
-                "score_environmental": scores["environmental"],
-                "score_housing_labor": scores["housing_labor"],
-                "score_climate": scores["climate"],
-                "score_cultural": scores["cultural"],
-                "score_accessibility": scores["accessibility"],
-                "score_digital": scores["digital"],
-                "score_governance": scores["governance"],
-                "dhi_score": dhi,
-                "destination_stage": stage_num,
-                "stage_name": stage_name,
-            }).execute()
-        except Exception:
+      saved = save_assessment({
+            "destination_name": destination,
+            "country": country,
+            "score_destination": scores["destination"],
+            "score_marketing": scores["marketing"],
+            "score_economic": scores["economic"],
+            "score_social": scores["social"],
+            "score_environmental": scores["environmental"],
+            "score_housing_labor": scores["housing_labor"],
+            "score_climate": scores["climate"],
+            "score_cultural": scores["cultural"],
+            "score_accessibility": scores["accessibility"],
+            "score_digital": scores["digital"],
+            "score_governance": scores["governance"],
+            "dhi_score": dhi,
+            "destination_stage": stage_num,
+            "stage_name": stage_name,
+        })
+        if saved:
+            st.toast("✅ Assessment saved", icon="🌙")
+        else:
+            st.toast("⚠️ Could not save — results still shown")
             pass
         urgent_steps, important_steps = get_blueprint(scores)
 
