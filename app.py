@@ -2,7 +2,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title="PlanningMind · ViaMoon",
-    page_icon="🌙",
+    page_icon="https://exhibz.viamoon.com/wp-content/uploads/2026/08/cropped-Favicon114.png",
     layout="wide",
 )
 
